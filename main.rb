@@ -1,4 +1,15 @@
 require 'prawn'
+require 'json'
+require 'date'
+
+feed_file = File.open 'export/feed.json'
+data = JSON.load feed_file
+data['items'].each do |item|
+  item_date = DateTime.parse(item['date_published']).strftime('%Y-%m-%d')
+  item_description = /<p>([^<]+)/.match(item['content_html'])[1].gsub("\n", ', ')
+  image_source = /src=\"([^\"]+)/.match(item['content_html'])[1]
+  p "#{item_date}: #{item_description}"
+end
 
 Prawn::Document.generate("out.pdf", page_size: [693, 594], :margin => [0,0,0,0]) do
   fill_color '000000'
