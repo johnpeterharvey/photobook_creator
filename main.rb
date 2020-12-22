@@ -2,7 +2,6 @@ require 'prawn'
 require 'prawn/emoji'
 require 'json'
 require 'date'
-require 'pathname'
 
 current_year = 2020
 
@@ -37,12 +36,7 @@ Prawn::Document.generate("out.pdf", page_size: [693, 594], :margin => [0,0,0,0])
       fill_color 'FFFFFF'
 
       # Contents
-      image_file = Pathname.new("export/#{page_data[date][:source]}")
-      if image_file.exist?
-        image image_file.realpath, :at => [0, bounds.top], :position => :center, :vposition => :center, :fit => [693, 540]
-      else
-        puts "Problem image #{date} - #{image_file}"
-      end
+      image "export/#{page_data[date][:source]}", :at => [0, bounds.top], :position => :center, :vposition => :center, :fit => [693, 540]
       text_box "#{date}: #{page_data[date][:description]}", :at => [0, 40], :width => bounds.right, align: :center
     
       start_new_page
