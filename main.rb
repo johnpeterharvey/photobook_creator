@@ -4,6 +4,8 @@ require 'json'
 require 'date'
 
 current_year = 2020
+page_width = 693
+page_height = 594
 
 page_data = {}
 feed_file = File.open 'export/feed.json'
@@ -16,7 +18,7 @@ data['items'].each do |item|
 end
 dates = page_data.keys.sort.select {|date| /^#{current_year}.*/.match(date)}.slice_before(/.*01$/).to_a
 
-Prawn::Document.generate("out.pdf", page_size: [693, 594], :margin => [0,0,0,0]) do
+Prawn::Document.generate("out.pdf", page_size: [page_width, page_height], :margin => [0,0,0,0]) do
   dates.each do |month|
     # Formatting
     fill_color '000000'
@@ -36,10 +38,13 @@ Prawn::Document.generate("out.pdf", page_size: [693, 594], :margin => [0,0,0,0])
       fill_color 'FFFFFF'
 
       # Contents
-      image "export/#{page_data[date][:source]}", :at => [0, bounds.top], :position => :center, :vposition => :center, :fit => [693, 540]
+      text "\n\n"
+      image "export/#{page_data[date][:source]}", :position => :center, :fit => [page_width, page_height - 75] #54
       text_box "#{date}: #{page_data[date][:description]}", :at => [0, 40], :width => bounds.right, align: :center
     
       start_new_page
     }
   end
+  # Remove the extraneous final page
+  delete_page(-1)
 end
