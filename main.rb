@@ -6,6 +6,7 @@ require 'date'
 current_year = 2020
 page_width = 693
 page_height = 594
+height_subtract = 60
 
 page_data = {}
 feed_file = File.open 'export/feed.json'
@@ -31,20 +32,28 @@ Prawn::Document.generate("out.pdf", page_size: [page_width, page_height], :margi
     start_new_page
 
     month.each { |date|
+      p date
       # Formatting
       fill_color '000000'
       fill_rectangle [bounds.left, bounds.top], bounds.right, bounds.top
-      font('/System/Library/Fonts/HelveticaNeue.ttc', size: 11, style: 'Light')
+      font('/System/Library/Fonts/HelveticaNeue.ttc', size: 10, style: 'Light')
       fill_color 'FFFFFF'
 
       # Contents
-      text "\n\n"
-      image "export/#{page_data[date][:source]}", :position => :center, :fit => [page_width, page_height - 75] #54
+      text "\n"
+      image "export/#{page_data[date][:source]}", :position => :center, :fit => [page_width, page_height - height_subtract]
       text_box "#{date}: #{page_data[date][:description]}", :at => [0, 40], :width => bounds.right, align: :center
     
       start_new_page
     }
   end
-  # Remove the extraneous final page
-  delete_page(-1)
+  # Final page
+  if (dates.length % 2) then
+    p "Odd number of pages, adding final blank page"
+    fill_color '000000'
+    fill_rectangle [bounds.left, bounds.top], bounds.right, bounds.top
+  else
+    p "Even number of pages, removing extraneous extra"
+    delete_page(-1)
+  end
 end
