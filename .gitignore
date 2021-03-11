@@ -60,4 +60,3 @@ build-iPhoneSimulator/
 *.pdf
 
 export/
-!export/expand_export_bar_archive_here
