@@ -24,7 +24,7 @@ data['items'].each do |item|
   item_date = DateTime.parse(item['date_published']).strftime('%Y-%m-%d')
   item_description = /<p>([^<]+)/.match(item['content_html'])[1].gsub("\n", ', ')
   image_source = /src=\"([^\"]+)/.match(item['content_html'])[1]
-  page_data[item_date] = {:description => item_description, :source => image_source}
+  page_data[item_date] = {:description => item_description, :source => "export/#{image_source}"}
 end
 
 # Filter to only the required year, and slice into an array of arrays by month
@@ -55,7 +55,7 @@ Prawn::Document.generate("out.pdf", page_size: [page_width, page_height], :margi
 
       # Image
       bounding_box([0, page_height], width: page_width, height: page_height - height_subtract) do
-        image "export/#{page_data[date][:source]}", :position => :center, :vposition => :center, :fit => [page_width, page_height - height_subtract]
+        image "#{page_data[date][:source]}", :position => :center, :vposition => :center, :fit => [page_width, page_height - height_subtract]
       end
       # Image description
       text_box "#{date}: #{page_data[date][:description]}", :at => [0, text_position], :width => bounds.right, align: :center
