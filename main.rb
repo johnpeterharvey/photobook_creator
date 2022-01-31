@@ -16,7 +16,7 @@ data = JSON.load feed_file
 
 # Init the page data with no image blanks
 (Date.new(current_year, 1, 1)..Date.new(current_year, 12, 31)).to_a.each do |date|
-  page_data[date.strftime('%Y-%m-%d')] = {:description => "Nothing Posted", :source => "no_image.png"}
+  page_data[date.strftime('%Y-%m-%d')] = {:description => "Nothing Posted", :source => nil}
 end
 
 # For all the items posted, iterate through
@@ -55,7 +55,12 @@ Prawn::Document.generate("out.pdf", page_size: [page_width, page_height], :margi
 
       # Image
       bounding_box([0, page_height], width: page_width, height: page_height - height_subtract) do
-        image "#{page_data[date][:source]}", :position => :center, :vposition => :center, :fit => [page_width, page_height - height_subtract]
+        case page_data[date][:source]
+        when nil
+          puts "No image for date"
+        else
+          image "#{page_data[date][:source]}", :position => :center, :vposition => :center, :fit => [page_width, page_height - height_subtract]
+        end
       end
       # Image description
       text_box "#{date}: #{page_data[date][:description]}", :at => [0, text_position], :width => bounds.right, align: :center
