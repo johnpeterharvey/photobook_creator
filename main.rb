@@ -3,7 +3,7 @@ require 'prawn/emoji'
 require 'json'
 require 'date'
 
-current_year = 2021
+current_year = 2023
 
 page_width = 693
 page_height = 594
